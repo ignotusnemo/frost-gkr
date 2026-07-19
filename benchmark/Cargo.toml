@@ -1,0 +1,15 @@
+[package]
+name = "frost-gkr-bench"
+description = "Reproducible legacy-versus-FROST-GKR benchmark"
+publish = false
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[dependencies]
+frost_gkr = { package = "frost-gkr", path = "../crates/gkr" }
+frost_gkr_core = { package = "frost-gkr-core", path = "../crates/core" }
+frost_gkr_poseidon2b = { package = "frost-gkr-poseidon2b", path = "../crates/poseidon2b" }

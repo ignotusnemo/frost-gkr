@@ -1,0 +1,18 @@
+[package]
+name = "frost-gkr"
+description = "Frobenius Reduction Over Shifted Tables for repeated Poseidon2b computations"
+publish = false
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[dependencies]
+frost_gkr_core = { package = "frost-gkr-core", path = "../core" }
+frost_gkr_poseidon2b = { package = "frost-gkr-poseidon2b", path = "../poseidon2b" }
+rayon.workspace = true
+
+[dev-dependencies]
+rand.workspace = true

@@ -1,0 +1,22 @@
+[workspace]
+members = [
+    "benchmark",
+    "crates/core",
+    "crates/gkr",
+    "crates/poseidon2b",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+authors = ["Ignotus Nemo"]
+repository = "https://github.com/ignotusnemo/frost-gkr"
+homepage = "https://frost.noid.network/"
+
+[workspace.dependencies]
+rand = "0.8"
+rayon = "1.10"
+serde = { version = "1.0", features = ["derive"] }
+zeroize = { version = "1.8", features = ["zeroize_derive"] }

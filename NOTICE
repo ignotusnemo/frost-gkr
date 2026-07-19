@@ -1,0 +1,22 @@
+FROST-GKR
+Copyright 2026 Ignotus Nemo
+
+This research artifact contains the FROST-GKR implementation originally
+developed for the ParanO(1)d proof system.
+
+Portions of the binary-field implementation are derived from hekate-math:
+https://github.com/oumuamua-labs/hekate-math
+
+hekate-math
+Copyright 2026 Andrei Kochergin and Oumuamua Labs.
+
+This product includes software developed by:
+Oumuamua Labs <info@oumuamua.dev>
+Andrei Kochergin <andrei@oumuamua.dev>
+
+Portions of the field, MLE, and Poseidon2b implementation are adapted from
+binius64:
+https://github.com/binius-zk/binius64
+
+Copyright (c) 2025 The Binius Developers
+Copyright (c) 2025 Irreducible, Inc.

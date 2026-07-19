@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use FROST-GKR, please cite the paper and this artifact."
+title: "FROST-GKR: Direct Poseidon2b Relations over Binary Tower Fields"
+type: software
+authors:
+  - given-names: Ignotus
+    family-names: Nemo
+date-released: 2026-07-19
+license: Apache-2.0
+repository-code: "https://github.com/ignotusnemo/frost-gkr"
+url: "https://frost.noid.network/"

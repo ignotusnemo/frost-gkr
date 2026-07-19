@@ -1,0 +1,17 @@
+[package]
+name = "frost-gkr-core"
+description = "Binary-field arithmetic used by the FROST-GKR research artifact"
+publish = false
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[dependencies]
+serde.workspace = true
+zeroize.workspace = true
+
+[dev-dependencies]
+rand.workspace = true

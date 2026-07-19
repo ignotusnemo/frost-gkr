@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: rustup show active-toolchain
+      - name: Format
+        run: cargo fmt --all --check
+      - name: Clippy
+        run: cargo clippy --release --locked --workspace --all-targets -- -D warnings
+      - name: Test
+        run: cargo test --release --locked --workspace
+      - name: Benchmark smoke test
+        run: cargo run --release --locked -p frost-gkr-bench -- --warmups 0 --samples 1
