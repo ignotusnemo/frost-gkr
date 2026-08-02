@@ -5,8 +5,8 @@
 [Protocol explainer](https://lab.parano1d.org/research/frost-gkr-global-trace-protocol/) · [Paper](https://github.com/ignotusnemo/o1-lab/blob/main/papers/FROST_GKR.pdf) · [Published benchmark](results/2026-07-19-i7-1365u-20-sample.md)
 
 FROST-GKR is a research component of
-[ParanO(1)d](https://parano1d.org/), a proof-native L1 statechain secured by
-proof of work. This repository publishes the construction, reference
+[ParanO(1)d](https://parano1d.org/), a proof-native Layer 1 secured by proof of
+work. This repository publishes the construction, reference
 implementation, and comparative benchmark as a self-contained artifact.
 
 FROST-GKR is a GKR arithmetization for repeated sequential computation over
