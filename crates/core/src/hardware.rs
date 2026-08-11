@@ -471,6 +471,23 @@ pub fn clmul_gcm(a: u128, b: u128) -> u128 {
     }
 }
 
+/// Two independent flat-basis GF(2^128) products.  On AVX2 + VPCLMULQDQ
+/// targets both products occupy the two 128-bit lanes of one 256-bit vector;
+/// portable builds retain the exact scalar result.
+#[inline]
+pub fn clmul_gcm_pair(a0: u128, b0: u128, a1: u128, b1: u128) -> [u128; 2] {
+    #[cfg(all(
+        target_arch = "x86_64",
+        target_feature = "avx2",
+        target_feature = "vpclmulqdq"
+    ))]
+    unsafe {
+        return x86_64_clmul::clmul_pair(a0, b0, a1, b1);
+    }
+    #[allow(unreachable_code)]
+    [clmul_gcm(a0, b0), clmul_gcm(a1, b1)]
+}
+
 /// Convert a raw tower-basis u128 to flat-basis.
 #[inline(always)]
 pub fn tower_to_flat_u128(v: u128) -> u128 {
@@ -529,6 +546,48 @@ mod x86_64_clmul {
         let x_hi = v1_u128 ^ (v_mid_u128 >> 64);
 
         reduce_gcm_256(x_hi, x_lo)
+    }
+
+    #[cfg(all(target_feature = "avx2", target_feature = "vpclmulqdq"))]
+    #[target_feature(enable = "avx2", enable = "vpclmulqdq")]
+    pub unsafe fn clmul_pair(a0: u128, b0: u128, a1: u128, b1: u128) -> [u128; 2] {
+        #[inline]
+        unsafe fn lane(value: __m256i, high: bool) -> __m128i {
+            if high {
+                unsafe { _mm256_extracti128_si256::<1>(value) }
+            } else {
+                unsafe { _mm256_castsi256_si128(value) }
+            }
+        }
+
+        #[inline]
+        unsafe fn reduce_product(ll: __m128i, cross: __m128i, hh: __m128i) -> u128 {
+            let ll = unsafe { std::mem::transmute::<__m128i, u128>(ll) };
+            let cross = unsafe { std::mem::transmute::<__m128i, u128>(cross) };
+            let hh = unsafe { std::mem::transmute::<__m128i, u128>(hh) };
+            let low = ll ^ (cross << 64);
+            let high = hh ^ (cross >> 64);
+            reduce_gcm_256(high, low)
+        }
+
+        unsafe {
+            let a0 = _mm_set_epi64x((a0 >> 64) as i64, a0 as i64);
+            let a1 = _mm_set_epi64x((a1 >> 64) as i64, a1 as i64);
+            let b0 = _mm_set_epi64x((b0 >> 64) as i64, b0 as i64);
+            let b1 = _mm_set_epi64x((b1 >> 64) as i64, b1 as i64);
+            let a = _mm256_set_m128i(a1, a0);
+            let b = _mm256_set_m128i(b1, b0);
+            let a_cross = _mm256_xor_si256(a, _mm256_shuffle_epi32::<0x4e>(a));
+            let b_cross = _mm256_xor_si256(b, _mm256_shuffle_epi32::<0x4e>(b));
+            let ll = _mm256_clmulepi64_epi128::<0x00>(a, b);
+            let hh = _mm256_clmulepi64_epi128::<0x11>(a, b);
+            let middle = _mm256_clmulepi64_epi128::<0x00>(a_cross, b_cross);
+            let cross = _mm256_xor_si256(_mm256_xor_si256(middle, ll), hh);
+            [
+                reduce_product(lane(ll, false), lane(cross, false), lane(hh, false)),
+                reduce_product(lane(ll, true), lane(cross, true), lane(hh, true)),
+            ]
+        }
     }
 }
 
@@ -724,5 +783,32 @@ impl HardwareField for Block128 {
     #[inline(always)]
     fn to_tower(&self) -> Self {
         Flat(*self).to_tower().inner()
+    }
+}
+
+#[cfg(test)]
+mod paired_tests {
+    use super::*;
+
+    #[test]
+    fn paired_clmul_matches_scalar_clmul() {
+        let mut state = 0x7261_6767_6564_5f76u64;
+        let mut next = || {
+            state = state.wrapping_add(0x9e37_79b9_7f4a_7c15);
+            let mut value = state;
+            value = (value ^ (value >> 30)).wrapping_mul(0xbf58_476d_1ce4_e5b9);
+            value = (value ^ (value >> 27)).wrapping_mul(0x94d0_49bb_1331_11eb);
+            value ^ (value >> 31)
+        };
+        for _ in 0..1_000 {
+            let a0 = (next() as u128) | ((next() as u128) << 64);
+            let b0 = (next() as u128) | ((next() as u128) << 64);
+            let a1 = (next() as u128) | ((next() as u128) << 64);
+            let b1 = (next() as u128) | ((next() as u128) << 64);
+            assert_eq!(
+                clmul_gcm_pair(a0, b0, a1, b1),
+                [clmul_gcm(a0, b0), clmul_gcm(a1, b1)]
+            );
+        }
     }
 }

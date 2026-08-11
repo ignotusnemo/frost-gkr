@@ -2,7 +2,7 @@
 
 **Frobenius Reduction Over Shifted Tables**
 
-[Protocol explainer](https://lab.parano1d.org/research/frost-gkr-global-trace-protocol/) · [Paper](https://github.com/ignotusnemo/o1-lab/blob/main/papers/FROST_GKR.pdf) · [Published benchmark](results/2026-07-19-i7-1365u-20-sample.md)
+[Protocol explainer](https://lab.parano1d.org/research/frost-gkr-global-trace-protocol/) · [Paper](https://github.com/ignotusnemo/o1-lab/blob/main/papers/FROST_GKR.pdf) · [Published benchmark](results/2026-07-19-i7-1365u-20-sample.md) · [Ragged multi-instance GKR](RAGGED.md)
 
 FROST-GKR is a research component of
 [ParanO(1)d](https://parano1d.org/), a proof-native Layer 1 secured by proof of
@@ -75,7 +75,7 @@ cargo run --release --locked -p frost-gkr-bench -- \
 benchmark/          correctness-gated comparative benchmark
 crates/core/        GF(2^128), packed arithmetic, MLE and sumcheck primitives
 crates/poseidon2b/  native Poseidon2b statement and Fiat–Shamir channel
-crates/gkr/         product-chain baseline and FROST-GKR implementation
+crates/gkr/         product-chain, FROST-GKR, and ragged GKR implementations
 results/            published benchmark reports
 ```
 

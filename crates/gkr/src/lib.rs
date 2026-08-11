@@ -15,6 +15,7 @@ pub mod legacy;
 pub mod mle_layout;
 pub mod perm_sumcheck;
 pub mod product_sumcheck;
+pub mod ragged;
 pub mod sequence;
 pub mod shift;
 pub mod unified_mle;
@@ -40,6 +41,11 @@ pub use perm_sumcheck::{
 };
 pub use product_sumcheck::{
     compute_product_claim, prove_product, prove_square, verify_product, ProductProof, RoundEvals,
+};
+pub use ragged::{
+    claims_from_outputs, discharge_terminals, evaluate_column, initial_layer_columns,
+    output_layer_columns, prove_ragged, verify_ragged, LaneClaim as RaggedLaneClaim, RaggedError,
+    RaggedLayerProof, RaggedProof, WideChannel,
 };
 pub use sequence::{
     evaluate_sequence, sequence_digest, SequenceInput, SequenceWitness, N_PERMUTATIONS,
